@@ -1,27 +1,18 @@
 {
-  "name": "thingy-gateway",
-  "version": "0.0.1",
-  "description": "Nordic Thingy:52 Node.js gateway",
+  "name": "thingy-intermediate-blue",
+  "version": "1.0.0",
+  "description": "thingy-intermediate-blue",
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DurandA/thingy-gateway.git"
+    "url": "git+https://github.com/ASE-thingy-blue/thingy-intermediate-blue.git"
   },
-  "keywords": [],
-  "author": "Arnaud Durand",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/DurandA/thingy-gateway/issues"
-  },
-  "homepage": "https://github.com/DurandA/thingy-gateway#readme",
+  "author": "ASE Team Blue",
   "dependencies": {
+    "bluetooth-hci-socket": "^0.5.1",
     "eventsource": "^1.0.5",
     "restler": "^3.4.0",
     "thingy52": "^1.0.1",
-    "yargs": "^8.0.2",
-    "bluetooth-hci-socket": "^0.5.1"
-  },
-  "devDependencies": {
-    "bluetooth-hci-socket": "^0.5.1"
+    "yargs": "^8.0.2"
   }
 }
