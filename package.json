@@ -11,6 +11,7 @@
   "dependencies": {
     "bluetooth-hci-socket": "^0.5.1",
     "eventsource": "^1.0.5",
+    "is-docker": "^1.1.0",
     "restler": "^3.4.0",
     "thingy52": "^1.0.1",
     "yargs": "^8.0.2"

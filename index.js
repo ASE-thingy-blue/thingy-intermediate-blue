@@ -1,5 +1,15 @@
-console.log('test');
+const isDocker = require('is-docker');
 var Thingy = require('thingy52');
+
+// Check if the process is running inside a Docker container
+if (isDocker())
+{
+    console.log('Running inside a Docker container');
+}
+else
+{
+    console.warning('NOT running inside a Docker container');
+}
 
 var events = function (api_root) {
     var client = require('./client')(api_root);
