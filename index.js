@@ -11,53 +11,70 @@ else
     console.warning('NOT running inside a Docker container');
 }
 
-var events = function (api_root) {
+
+console.log('test');
+
+var events = function (api_root)
+{
     var client = require('./client')(api_root);
     return require('./events')(client);
 }
 
-function* discoverByIds(uuids) {
-  for (var uuid of uuids) {
-    yield new Promise((resolve, reject) => {
-      Thingy.discoverById(uuid, function(thingy) {
-          console.log('Discovered: ' + thingy);
-          resolve(thingy);
-      });
-    });
-  }
+function* discoverByIds(uuids)
+{
+    for (var uuid of uuids)
+    {
+        yield new Promise((resolve, reject) =>
+        {
+            Thingy.discoverById(uuid, function(thingy)
+            {
+                console.log('Discovered: ' + thingy);
+                resolve(thingy);
+            });
+        });
+    }
 }
 
-builder = (yargs) => {
-  yargs.option('api-root', {
-    describe: 'root url of server API',
-    default: 'http://127.0.0.1:8080'
-  })
-  yargs.option('enable-sse', {
-    describe: 'enable server-sent events',
-    default: false
-  })
+builder = (yargs) =>
+{
+    yargs.option('api-root',
+    {
+        describe: 'Root URL of server API',
+        default: 'http://127.0.0.1:8080'
+    })
+    yargs.option('enable-sse',
+    {
+        describe: 'Enable server-sent events',
+        default: false
+    })
 }
 
 const argv = require('yargs')
-    .command('connect [uuids..]', 'connect to device(s) with specified [uuids..] (= MACs) and connect to <api-root>', builder, (argv) => {
-        var uuids = []
-        uuids = argv.uuids.map(function(e) {
-            return e.toString().replace(/:/g,'').toLowerCase();
-        })
-        console.log('Search for device UUIDs: '+uuids);
+.command('connect [uuids..]', 'Connect to device(s) with specified [uuids..] (= MACs) and connect to <api-root>', builder, (argv) =>
+{
+    var uuids = []
+    uuids = argv.uuids.map(function(e)
+    {
+        return e.toString().replace(/:/g,'').toLowerCase();
+    })
+    console.log('Search for device UUIDs: ' + uuids);
 
-        Promise.all(discoverByIds(uuids)).then(devices => {
-          console.log('Discovered all devices!');
-          for (var thingy of devices) {
+    Promise.all(discoverByIds(uuids)).then(devices =>
+    {
+        console.log('Discovered all devices!');
+        for (var thingy of devices)
+        {
             events(argv.apiRoot).onDiscover(thingy, argv.enableSse);
-          }
-        });
-    })
-    .command('discover', 'discover all devices and connect to <api-root>', builder, (argv) => {
-        Thingy.discoverAll(function (thingy){
-            console.log('Discovered: ' + thingy);
-            events(argv.apiRoot).onDiscover(thingy, {enableEventSource: argv.enableSse})}
-        );
-    })
-    .help()
-    .argv
+        }
+    });
+})
+.command('discover', 'Discover all devices and connect to <api-root>', builder, (argv) =>
+{
+    Thingy.discoverAll(function (thingy)
+    {
+        console.log('Discovered: ' + thingy);
+        events(argv.apiRoot).onDiscover(thingy, {enableEventSource: argv.enableSse})
+    });
+})
+.help()
+.argv

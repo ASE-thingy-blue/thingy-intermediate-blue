@@ -29,87 +29,188 @@
   OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-
 var client;
 
-function setup(settings){
-    this.temperature_interval_set(settings.temperature.interval, function(error) {
-        if (error) {
-            console.log('Temperature sensor configure! ' + error);
+function onTemperatureData(temperature)
+{
+    console.log('Temperature sensor: ' + temperature);
+}
+
+function onPressureData(pressure)
+{
+    console.log('Pressure sensor: ' + pressure);
+}
+
+function onHumidityData(humidity)
+{
+    console.log('Humidity sensor: ' + humidity);
+}
+
+function onGasData(gas)
+{
+    console.log('Gas sensor: eCO2 ' + gas.eco2 + ' - TVOC ' + gas.tvoc);
+}
+
+function onColorData(color)
+{
+    console.log('Color sensor: R ' + color.red +
+                             ' G ' + color.green +
+                             ' B ' + color.blue +
+                             ' C ' + color.clear);
+}
+
+function setup(settings)
+{
+    this.temperature_interval_set(settings.temperature.interval, function(error)
+    {
+        if (error)
+        {
+            console.error('Temperature sensor configuration error: ' + error);
         }
     });
-    this.pressure_interval_set(settings.pressure.interval, function(error) {
-        if (error) {
-            console.log('Pressure sensor configure! ' + error);
+    this.pressure_interval_set(settings.pressure.interval, function(error)
+    {
+        if (error)
+        {
+            console.error('Pressure sensor configuration error: ' + error);
         }
     });
-    this.humidity_interval_set(settings.humidity.interval, function(error) {
-        if (error) {
-            console.log('Humidity sensor configure! ' + error);
+    this.humidity_interval_set(settings.humidity.interval, function(error)
+    {
+        if (error)
+        {
+            console.error('Humidity sensor configuration error: ' + error);
         }
     });
-    this.color_interval_set(settings.color.interval, function(error) {
-        if (error) {
-            console.log('Color sensor configure! ' + error);
+    this.color_interval_set(settings.color.interval, function(error)
+    {
+        if (error)
+        {
+            console.error('Color sensor configuration error: ' + error);
         }
     });
-    this.gas_mode_set(settings.gas.mode, function(error) {
-        if (error) {
-            console.log('Gas sensor configure! ' + error);
+    this.gas_mode_set(settings.gas.mode, function(error)
+    {
+        if (error)
+        {
+            console.error('Gas sensor configuration error: ' + error);
         }
     });
 }
 
-function onDiscover(thingy, enableEventSource) {
-  console.log('Discovered: ' + thingy);
+function onDiscover(thingy, enableEventSource)
+{
+    console.log('Discovered: ' + thingy);
 
-  thingy.on('disconnect', function() {
-    console.log('Disconnected!');
-  });
+    thingy.on('disconnect', function()
+    {
+        console.log('Disconnected!');
+    });
 
-  thingy.connectAndSetUp(function(error) {
-    console.log('Connected! ' + error ? error : '');
+    thingy.connectAndSetUp(function(error)
+    {
+        if (error)
+        {
+            console.error('Connection error: ' + error);
+        }
+        else
+        {
+            console.log('Connected!');
+        }
 
-    thingy.on('temperatureNotif', client.sendTemperature.bind(thingy));
-    thingy.on('pressureNotif', client.sendPressure.bind(thingy));
-    thingy.on('humidityNotif', client.sendHumidity.bind(thingy));
-    thingy.on('gasNotif', client.sendGas.bind(thingy));
-    thingy.on('colorNotif', client.sendColor.bind(thingy));
-    thingy.on('buttonNotif', client.sendButton.bind(thingy));
+        thingy.on('temperatureNotif', client.sendTemperature.bind(thingy));
+        thingy.on('pressureNotif', client.sendPressure.bind(thingy));
+        thingy.on('humidityNotif', client.sendHumidity.bind(thingy));
+        thingy.on('gasNotif', client.sendGas.bind(thingy));
+        thingy.on('colorNotif', client.sendColor.bind(thingy));
+        thingy.on('buttonNotif', client.sendButton.bind(thingy));
 
-    client.getSettings.call(thingy).on('complete', setup.bind(thingy));
-    if (enableEventSource) {
-	console.log('getLedSource');
-        client.getLedSource.call(thingy, function (e) {
-            thingy.led_breathe(JSON.parse(e.data));
+        client.getSettings.call(thingy).on('complete', setup.bind(thingy));
+        if (enableEventSource)
+        {
+            console.log('getLedSource');
+            client.getLedSource.call(thingy, function (e)
+            {
+                thingy.led_breathe(JSON.parse(e.data));
+            });
+        }
+        else
+        {
+            setInterval(() => client.getLed.call(thingy).on('complete', thingy.led_breathe.bind(thingy)), 1000);
+        }
+        thingy.enabled = true;
+
+        thingy.temperature_enable(function(error)
+        {
+            if (error)
+            {
+                console.error('Error starting temperature sensor: ' + error);
+            }
+            else
+            {
+                console.log('Temperature sensor started!');
+            }
         });
-    } else {
-        setInterval(() => client.getLed.call(thingy).on('complete', thingy.led_breathe.bind(thingy)), 1000);
-    }
-    thingy.enabled = true;
-
-    thingy.temperature_enable(function(error) {
-        console.log('Temperature sensor started! ' + ((error) ? error : ''));
+        thingy.pressure_enable(function(error)
+        {
+            if(error)
+            {
+                console.error('Error starting pressure sensor: ' + error);
+            }
+            else
+            {
+                console.log('Pressure sensor started!');
+            }
+        });
+        thingy.humidity_enable(function(error)
+        {
+            if(error)
+            {
+                console.error('Error starting humidity sensor: ' + error);
+            }
+            else
+            {
+                console.log('Humidity sensor started!');
+            }
+        });
+        thingy.color_enable(function(error)
+        {
+            if(error)
+            {
+                console.error('Error starting color sensor: ' + error);
+            }
+            else
+            {
+                console.log('Color sensor started!');
+            }
+        });
+        thingy.gas_enable(function(error)
+        {
+            if(error)
+            {
+                console.error('Error starting gas sensor: ' + error);
+            }
+            else
+            {
+                console.log('Gas sensor started!');
+            }
+        });
+        thingy.button_enable(function(error)
+        {
+            if(error)
+            {
+                console.error('Error starting button: ' + error);
+            }
+            else
+            {
+                console.log('Button started!');
+            }
+        });
     });
-    thingy.pressure_enable(function(error) {
-        console.log('Pressure sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.humidity_enable(function(error) {
-        console.log('Humidity sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.color_enable(function(error) {
-        console.log('Color sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.gas_enable(function(error) {
-        console.log('Gas sensor started! ' + ((error) ? error : ''));
-    });
-    thingy.button_enable(function(error) {
-        console.log('Button started! ' + ((error) ? error : ''));
-    });
-  });
 }
 
-module.exports = function(_client, enableEventSource) {
+module.exports = function(_client, enableEventSource)
+{
     var module = {};
     console.log('Reading Thingy environment sensors!');
     client = _client;
