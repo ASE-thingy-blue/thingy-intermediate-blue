@@ -26,7 +26,9 @@ function onDiscover(thingy) {
         thingy.on('buttonNotif', client.sendButton.bind(thingy));
 
         //Register Device on Server
-        client.registerDevice.call(thingy).on();
+        client.registerDevice.call(thingy).on('complete', function() {
+            console.log('registerDevice done');
+        });
         //Load Settings from Server
         client.getSettings.call(thingy).on('complete', setup.bind(thingy));
         //Ask for LED Config each 1000ms
