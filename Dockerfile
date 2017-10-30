@@ -6,6 +6,10 @@ ENV appdir /usr/src/app/
 RUN mkdir -p $appdir
 WORKDIR $appdir
 
+RUN apt-get update
+RUN apt-get install bluez -y
+RUN apt-get clean
+
 COPY . .
 RUN npm install
 RUN ["chmod", "+x", "/usr/src/app/startup.sh"]
@@ -13,6 +17,6 @@ RUN ["chmod", "+x", "/usr/src/app/startup.sh"]
 EXPOSE 8080
 
 # Drop privileges according to Docker and Node.js Best Practices (https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
-USER node
+# USER node
 
 CMD ["bash", "/usr/src/app/startup.sh"]
