@@ -8,11 +8,8 @@ if (isDocker())
 }
 else
 {
-    console.warning('NOT running inside a Docker container');
+    console.log('NOT running inside a Docker container');
 }
-
-
-console.log('test');
 
 var events = function (api_root)
 {
