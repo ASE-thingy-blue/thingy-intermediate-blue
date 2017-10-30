@@ -17,5 +17,5 @@ fi
 # run application
 if [ "$taction" == "run" ]; then
     echo "run: node . connect"
-    node . connect ${tuuid} --api ${tapi} --user ${tuser}
+    node . connect ${tuuid} --api ${tapi} --pi ${tpi} --user ${tuser} --cb ${tcb}
 fi

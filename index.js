@@ -1,16 +1,15 @@
-console.log('... started script, first line');
-//const isDocker = require('is-docker');
+const isDocker = require('is-docker');
 var Thingy = require('thingy52');
 
 // Check if the process is running inside a Docker container
-//if (isDocker()) {
-//    console.log('Running inside a Docker container');
-//} else {
-//    console.log('NOT running inside a Docker container');
-//}
+if (isDocker()) {
+    console.log('Running inside a Docker container');
+} else {
+    console.log('NOT running inside a Docker container');
+}
 
-var events = function (api_root) {
-    var client = require('./client')(api_root);
+var events = function (api, pi, user, cb) {
+    var client = require('./client')(api, pi, user, cb);
     return require('./events')(client);
 }
 
@@ -27,16 +26,20 @@ function* discoverByIds(uuids) {
 
 builder = (yargs) => {
     yargs.option('api', {
-        describe: 'Root URL of server API',
-        default: 'http://127.0.0.1:8080'
+        describe: 'Root URL of Server API.',
+        default: 'http://test.termon.pillo-srv.ch/thingy'
+    })
+    yargs.option('pi', {
+        describe: 'Device ID of Raspberry Pi.',
+        default: 'pi-thingy-blue'
     })
     yargs.option('user', {
-        describe: 'Username',
+        describe: 'Username of Server API User.',
         default: 'tester'
     })
-    yargs.option('sse',{
-        describe: 'Enable server-sent events',
-        default: false
+    yargs.option('cb', {
+        describe: 'Callback URL of Intermediate API.',
+        default: ''
     })
 }
 
@@ -51,11 +54,12 @@ const argv = require('yargs')
     Promise.all(discoverByIds(uuids)).then(devices => {
         console.log('Discovered all devices!');
         for (var thingy of devices) {
-            events(argv.api).onDiscover(thingy, argv.sse);
+            events(argv.api, argv.pi, argv.user, argv.cb).onDiscover(thingy);
         }
     });
 })
 .command('discover', 'Discover all devices and connect to <api-root>', builder, (argv) => {
+    console.log('Search for device UUIDs...');
     Thingy.discoverAll(function (thingy) {
         console.log('Discovered: ' + thingy);
     });

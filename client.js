@@ -1,92 +1,124 @@
-// Example POST method invocation
 var rest = require('restler');
-var EventSource = require('eventsource');
 
-module.exports = function(base_uri)
-{
+/**
+ * Client to Communicate with API Server
+ * @param api: API Server URL
+ * @param pi: Device (Raspberry Pi) ID
+ * @param user: Username
+ * @param cb: Callback API URL
+ * @returns {{}}
+ */
+module.exports = function(api, pi, user, cb) {
     var module = {};
 
-    module.logResponse = function(data, response)
-    {
-        // Parsed response body as JS object
-        console.log(data);
-        // Raw response
-        console.log(response);
-    };
-
-    function sendSensorData(sensor, data)
-    {
-        data.timestamp = new Date().getTime();
-        return rest.postJson(base_uri + '/' + this.id + '/sensors/' + sensor, data);
+    /**
+     * Register Thingy on API Server
+     * @returns {*}
+     */
+    module.registerDevice = function() {
+        var data = {
+            pi: pi,
+            thingy: this.id,
+            user: user,
+            cb: cb
+        };
+        return rest.putJson(api + '/' + this.id, data);
     }
 
-    module.sendTemperature = function(temperature)
-    {
-        return sendSensorData.call(this, 'temperature',
-        {
+    /**
+     * Load Settings from API Server
+     * @returns {*}
+     */
+    module.getSettings = function() {
+        return rest.get(api + '/' + this.id + '/setup');
+    };
+
+    /**
+     * Load LED Config from API Server
+     * @returns {*}
+     */
+    module.getLed = function() {
+        return rest.get(api + '/' + this.id + '/actuators/led');
+    };
+
+    /**
+     * Send Sensor Data as POST to API Server
+     * @param sensor: [temperature, pressure, humidity, color, gas, button]
+     * @param data: sensor data (timestamp added)
+     * @returns {*}
+     */
+    function sendSensorData(sensor, data){
+        data.timestamp = new Date().getTime();
+        return rest.postJson(api + '/' + this.id + '/sensors/' + sensor, data);
+    }
+
+    /**
+     * Send Temperature Data
+     * @param temperature
+     * @returns {*}
+     */
+    module.sendTemperature = function(temperature) {
+        return sendSensorData.call(this, 'temperature', {
             temperature : temperature
         });
     };
 
-    module.sendPressure = function(pressure)
-    {
-        return sendSensorData.call(this, 'pressure',
-        {
+    /**
+     * Send Pressure Data
+     * @param pressure
+     * @returns {*}
+     */
+    module.sendPressure = function(pressure) {
+        return sendSensorData.call(this, 'pressure', {
             pressure : pressure
         });
     };
 
-    module.sendHumidity = function(humidity)
-    {
-        return sendSensorData.call(this, 'humidity',
-        {
+    /**
+     * Send Humidity Data
+     * @param humidity
+     * @returns {*}
+     */
+    module.sendHumidity = function(humidity) {
+        return sendSensorData.call(this, 'humidity', {
             humidity : humidity
         });
     };
 
-    module.sendColor = function(color)
-    {
-        return sendSensorData.call(this, 'color',
-        {
+    /**
+     * Send Color Data
+     * @param color
+     * @returns {*}
+     */
+    module.sendColor = function(color) {
+        return sendSensorData.call(this, 'color', {
             color : color
         });
     };
 
-    module.sendGas = function(gas)
-    {
-        return sendSensorData.call(this, 'gas',
-        {
+    /**
+     * Send Gas Data
+     * @param gas
+     * @returns {*}
+     */
+    module.sendGas = function(gas) {
+        return sendSensorData.call(this, 'gas', {
             gas : gas
         });
     };
 
-    module.sendButton = function(state)
-    {
-        return sendSensorData.call(this, 'button',
-        {
-            button :
-            {
+    /**
+     * Send Button Data
+     * @param state
+     * @returns {*}
+     */
+    module.sendButton = function(state) {
+        return sendSensorData.call(this, 'button', {
+            button : {
                 state : state
             }
         });
     };
-
-    module.getSettings = function()
-    {
-        return rest.get(base_uri + '/' + this.id + '/setup');
-    };
-
-    module.getLed = function()
-    {
-        return rest.get(base_uri + '/' + this.id + '/actuators/led');
-    };
-
-    module.getLedSource = function(onmessage, onerror)
-    {
-        var source = new EventSource(base_uri + '/' + this.id + '/actuators/led');
-        source.onmessage = onmessage;
-        if (onerror) source.onerror = onerror;
-    }
 
     return module;
 };
