@@ -19,4 +19,4 @@ EXPOSE 8080
 # Drop privileges according to Docker and Node.js Best Practices (https://github.com/nodejs/docker-node/blob/master/docs/BestPractices.md)
 # USER node
 
-CMD ["bash", "/usr/src/app/startup.sh"]
+ENTRYPOINT ["/bin/bash", "-c", "/usr/src/app/startup.sh"]
