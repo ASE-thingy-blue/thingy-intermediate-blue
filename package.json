@@ -1,19 +1,24 @@
 {
-  "name": "thingy-intermediate-blue",
-  "version": "1.0.0",
-  "description": "thingy-intermediate-blue",
-  "main": "index.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ASE-thingy-blue/thingy-intermediate-blue.git"
-  },
-  "author": "ASE Team Blue",
-  "dependencies": {
-    "bluetooth-hci-socket": "^0.5.1",
-    "eventsource": "^1.0.5",
-    "is-docker": "^1.1.0",
-    "restler": "^3.4.0",
-    "thingy52": "^1.0.1",
-    "yargs": "^8.0.2"
-  }
+    "name": "thingy-intermediate-blue",
+    "version": "1.0.0",
+    "description": "thingy-intermediate-blue",
+    "main": "index.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ASE-thingy-blue/thingy-intermediate-blue.git"
+    },
+    "author": "ASE Team Blue",
+    "dependencies": {
+        "bluetooth-hci-socket": "^0.5.1",
+        "eventsource": "^1.0.5",
+        "is-docker": "^1.1.0",
+        "restler": "^3.4.0",
+        "thingy52": "^1.0.1",
+        "yargs": "^8.0.2",
+        "ejs": "^2.5.7",
+        "hapi": "^16.6.2",
+        "hapi-swagger": "^8.0.0",
+        "inert": "^4.2.1",
+        "joi": "^13.0.1"
+    }
 }

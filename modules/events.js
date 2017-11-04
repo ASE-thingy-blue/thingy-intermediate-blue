@@ -4,8 +4,10 @@ var client;
  * Startup Thingy
  * @param thingy
  */
-function onDiscover(thingy) {
+function onDiscover(thingy, pi, user) {
     console.log('Discovered: ' + thingy);
+    console.log('Starting Server:');
+    var server = require('./modules/server')(thingy, pi, user);
 
     thingy.on('disconnect', function() {
         console.log('Disconnected!');
@@ -112,7 +114,7 @@ function setup(settings) {
     });
 }
 
-module.exports = function(_client, enableEventSource) {
+module.exports = function(_client, pi, user) {
     var module = {};
     console.log('Reading Thingy environment sensors!');
     client = _client;
