@@ -54,7 +54,7 @@ const argv = require('yargs')
     Promise.all(discoverByIds(uuids)).then(devices => {
         console.log('Discovered all devices!');
         for (var thingy of devices) {
-            events(argv.api, argv.pi, argv.user, argv.cb).onDiscover(thingy, pi, user);
+            events(argv.api, argv.pi, argv.user, argv.cb).onDiscover(thingy);
         }
     });
 })
