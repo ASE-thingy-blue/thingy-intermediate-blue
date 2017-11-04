@@ -30,4 +30,4 @@ if [ "$taction" == "run" ]; then
     echo "run: node . connect"
     node . connect ${tuuid} --api ${tapi} --pi ${tpi} --user ${tuser} --cb ${tcb}
 fi
-) |tee ${LOG}
+) 2>&1 |tee ${LOG}

@@ -14,8 +14,8 @@ const Joi = require('joi');
 module.exports = function(thingy, pi, user) {
     var module = {};
 
-    const server = new Hapi.Server();
-    server.connection({
+    module.server = new Hapi.Server();
+    module.server.connection({
         host: '0.0.0.0',
         port: 8080,
         routes: {cors: true}
@@ -29,7 +29,7 @@ module.exports = function(thingy, pi, user) {
         }
     };
 
-    server.register([
+    module.server.register([
         Inert,
         Vision, {
             register: HapiSwagger,
@@ -37,7 +37,7 @@ module.exports = function(thingy, pi, user) {
         }
     ]);
 
-    server.route({
+    module.server.route({
         method: 'GET',
         path: '/',
         handler: function (request, reply) {
@@ -48,7 +48,7 @@ module.exports = function(thingy, pi, user) {
         }
     });
 
-    server.route({
+    module.server.route({
         method: 'GET',
         path: '/thingy',
         handler: function (request, reply) {
@@ -64,5 +64,12 @@ module.exports = function(thingy, pi, user) {
         }
     });
 
+    module.listen = function() {
+        module.server.start(function (err) {
+            console.log('Server running at: ', module.server.info.uri);
+        });
+    }
+
     return module;
+
 };

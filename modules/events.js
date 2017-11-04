@@ -8,8 +8,10 @@ var user;
  */
 function onDiscover(thingy) {
     console.log('Discovered: ' + thingy);
-    console.log('Starting Server:');
+    console.log('Starting Server... ');
     var server = require('./modules/server')(thingy, pi, user);
+    server.listen();
+    console.log('... Server Running');
 
     thingy.on('disconnect', function() {
         console.log('Disconnected!');
