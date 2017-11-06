@@ -1,7 +1,7 @@
 #!/bin/bash
 
 LOG="/var/data/intermediate.log"
-echo "" > ${log}
+echo "" > ${LOG}
 
 cd /usr/src/app
 
