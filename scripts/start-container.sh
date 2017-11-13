@@ -18,7 +18,7 @@ PI="$(cat /proc/cpuinfo | grep Serial | cut -d ' ' -f 2)"
 ACTION=""
 USER=""
 UUID=""
-PORT="22"
+PORT="8080"
 API="http://termon.pillo-srv.ch/thingy"
 
 function print_usage_and_exit()
