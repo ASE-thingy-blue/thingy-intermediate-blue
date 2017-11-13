@@ -8,12 +8,12 @@ if (isDocker()) {
     console.log('NOT running inside a Docker container');
 }
 
-const events = async function (api, pi, user, cb) {
+const events = function (api, pi, user, cb) {
     const client = require('./modules/client')(api, pi, user, cb);
     return require('./modules/events')(client, pi, user);
 };
 
-const server = async function (pi, user) {
+const server = function (pi, user) {
     return require('./modules/server')(pi, user);
 };
 
@@ -59,7 +59,8 @@ const argv = require('yargs')
         console.log('Discovered all devices!');
         for (const thingy of devices) {
             events(argv.api, argv.pi, argv.user, argv.cb).onDiscover(thingy);
-            server(argv.pi, argv.user).onDiscover(thingy);
+            //Server Disabled
+            //server(argv.pi, argv.user).onDiscover(thingy);
         }
     });
 })
