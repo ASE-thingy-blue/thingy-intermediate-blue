@@ -13,6 +13,7 @@ The Docker Container is controlled with Bash Script start-container.sh
 
 Example:
 
+    start-container.sh -a detect
     start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://termon.pillo-srv.ch/thingy
 
 For development purposes the project can still be run directly by navigating to the project directory and running

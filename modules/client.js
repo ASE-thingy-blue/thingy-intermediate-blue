@@ -1,4 +1,4 @@
-var rest = require('restler');
+const rest = require('restler');
 
 /**
  * Client to Communicate with API Server
@@ -9,21 +9,21 @@ var rest = require('restler');
  * @returns {{}}
  */
 module.exports = function(api, pi, user, cb) {
-    var module = {};
+    const module = {};
 
     /**
      * Register Thingy on API Server
      * @returns {*}
      */
     module.registerDevice = function() {
-        var data = {
+        const data = {
             pi: pi,
             thingy: this.id,
             user: user,
             cb: cb
         };
         return rest.putJson(api + '/' + this.id, data);
-    }
+    };
 
     /**
      * Load Settings from API Server

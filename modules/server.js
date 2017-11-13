@@ -4,18 +4,18 @@ const Vision = require('vision');
 const HapiSwagger = require('hapi-swagger');
 const Joi = require('joi');
 
-/**
- * Thingy Reverse API
- * @param thingy: thingy instance
- * @param pi: Device (Raspberry Pi) ID
- * @param user: Username
- * @returns {{}}
- */
-module.exports = function(thingy, pi, user) {
-    var module = {};
+let pi;
+let user;
 
-    module.server = new Hapi.Server();
-    module.server.connection({
+/**
+ * Start the Reverse API Server
+ * @param thingy: thingy instance
+ */
+function onDiscover(thingy) {
+    console.log('Discovered: ' + thingy + ', starting Reverse API...');
+
+    const server = new Hapi.Server();
+    server.connection({
         host: '0.0.0.0',
         port: 8080,
         routes: {cors: true}
@@ -23,13 +23,13 @@ module.exports = function(thingy, pi, user) {
 
     const swaggerOptions = {
         info: {
-        'title': 'thingy-api-blue',
+            'title': 'thingy-api-blue',
             'version': '1.0.0',
             'description': 'thingy-api-blue'
         }
     };
 
-    module.server.register([
+    server.register([
         Inert,
         Vision, {
             register: HapiSwagger,
@@ -37,7 +37,7 @@ module.exports = function(thingy, pi, user) {
         }
     ]);
 
-    module.server.route({
+    server.route({
         method: 'GET',
         path: '/',
         handler: function (request, reply) {
@@ -48,11 +48,11 @@ module.exports = function(thingy, pi, user) {
         }
     });
 
-    module.server.route({
+    server.route({
         method: 'GET',
         path: '/thingy',
         handler: function (request, reply) {
-            var thingy = {
+            let thingy = {
                 pi: pi,
                 thingy: this.id,
                 user: user
@@ -64,12 +64,23 @@ module.exports = function(thingy, pi, user) {
         }
     });
 
-    module.listen = function() {
-        module.server.start(function (err) {
-            console.log('Server running at: ', module.server.info.uri);
-        });
-    }
+    server.start(function (err) {
+        console.log('Server running at: ', server.info.uri);
+    });
 
+}
+
+/**
+ * Thingy Reverse API
+ * @param _pi: Device (Raspberry Pi) ID
+ * @param _user: Username
+ * @returns {{}}
+ */
+module.exports = function(_pi, _user) {
+    const module = {};
+    console.log('Reading Thingy environment sensors!');
+    pi = _pi;
+    user = _user;
+    module.onDiscover = onDiscover.bind();
     return module;
-
 };

@@ -1,6 +1,6 @@
-var client;
-var pi;
-var user;
+let client;
+let pi;
+let user;
 
 /**
  * Startup Thingy
@@ -8,10 +8,6 @@ var user;
  */
 function onDiscover(thingy) {
     console.log('Discovered: ' + thingy);
-    // console.log('Starting Server... ');
-    // var server = require('../modules/server')(thingy, pi, user);
-    // server.listen();
-    // console.log('... Server Running');
 
     thingy.on('disconnect', function() {
         console.log('Disconnected!');
@@ -119,7 +115,7 @@ function setup(settings) {
 }
 
 module.exports = function(_client, _pi, _user) {
-    var module = {};
+    const module = {};
     console.log('Reading Thingy environment sensors!');
     client = _client;
     pi = _pi;

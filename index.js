@@ -1,5 +1,5 @@
 const isDocker = require('is-docker');
-var Thingy = require('thingy52');
+const Thingy = require('thingy52');
 
 // Check if the process is running inside a Docker container
 if (isDocker()) {
@@ -8,13 +8,17 @@ if (isDocker()) {
     console.log('NOT running inside a Docker container');
 }
 
-var events = function (api, pi, user, cb) {
-    var client = require('./modules/client')(api, pi, user, cb);
+const events = function (api, pi, user, cb) {
+    const client = require('./modules/client')(api, pi, user, cb);
     return require('./modules/events')(client, pi, user);
-}
+};
+
+const server = function (pi, user) {
+    return require('./modules/server')(pi, user);
+};
 
 function* discoverByIds(uuids) {
-    for (var uuid of uuids) {
+    for (const uuid of uuids) {
         yield new Promise((resolve, reject) => {
             Thingy.discoverById(uuid, function(thingy) {
                 console.log('Discovered: ' + thingy);
@@ -45,7 +49,7 @@ builder = (yargs) => {
 
 const argv = require('yargs')
 .command('connect [uuids..]', 'Connect to device(s) with specified [uuids..] (= MACs) and connect to <api-root>', builder, (argv) => {
-    var uuids = [];
+    let uuids = [];
     uuids = argv.uuids.map(function(e) {
         return e.toString().replace(/:/g,'').toLowerCase();
     });
@@ -53,8 +57,9 @@ const argv = require('yargs')
 
     Promise.all(discoverByIds(uuids)).then(devices => {
         console.log('Discovered all devices!');
-        for (var thingy of devices) {
+        for (const thingy of devices) {
             events(argv.api, argv.pi, argv.user, argv.cb).onDiscover(thingy);
+            server(argv.pi, argv.user).onDiscover(thingy);
         }
     });
 })
