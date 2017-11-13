@@ -6,13 +6,16 @@ const Joi = require('joi');
 
 let pi;
 let user;
+let thingy;
 
 /**
  * Start the Reverse API Server
  * @param thingy: thingy instance
  */
-function onDiscover(thingy) {
-    console.log('Discovered: ' + thingy + ', starting Reverse API...');
+function onDiscover(_thingy) {
+    console.log('Discovered: ' + _thingy + ', starting Reverse API...');
+    thingy = _thingy;
+    console.log('Discovered: ' + thingy.uuid);
 
     const server = new Hapi.Server();
     server.connection({
@@ -54,7 +57,7 @@ function onDiscover(thingy) {
         handler: function (request, reply) {
             let thingy = {
                 pi: pi,
-                thingy: this.id,
+                thingy: thingy.uuid,
                 user: user
             };
             reply(thingy).code(200);
