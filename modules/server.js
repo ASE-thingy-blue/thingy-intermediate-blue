@@ -15,7 +15,6 @@ let thingy;
 function onDiscover(_thingy) {
     console.log('Discovered: ' + _thingy + ', starting Reverse API...');
     thingy = _thingy;
-    console.log('Discovered: ' + thingy.uuid);
 
     const server = new Hapi.Server();
     server.connection({

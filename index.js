@@ -8,12 +8,12 @@ if (isDocker()) {
     console.log('NOT running inside a Docker container');
 }
 
-const events = function (api, pi, user, cb) {
+const events = async function (api, pi, user, cb) {
     const client = require('./modules/client')(api, pi, user, cb);
     return require('./modules/events')(client, pi, user);
 };
 
-const server = function (pi, user) {
+const server = async function (pi, user) {
     return require('./modules/server')(pi, user);
 };
 
