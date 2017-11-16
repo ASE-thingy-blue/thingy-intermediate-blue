@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script is used inside the Docker container to set up the Thingy Intermediate Gateway
+
 LOG="/var/data/intermediate.log"
 echo "" > ${LOG}
 
@@ -11,7 +13,7 @@ hciconfig
 
 (
 echo ""
-echo "executing startup-script..."
+echo "Executing startup-script..."
 echo "tuuid: ${tuuid}"
 echo "tapi: ${tapi}"
 echo "tpi: ${tpi}"
@@ -19,15 +21,15 @@ echo "tuser: ${tuser}"
 echo "tcb: ${tcb}"
 echo ""
 
-# detect thingy
+# Detect Thingy
 if [ "$taction" == "detect" ]; then
-    echo "run: node . discover"
+    echo "Run: node . discover"
     node . discover
 fi
 
-# run application
+# Run application
 if [ "$taction" == "run" ]; then
-    echo "run: node . connect"
+    echo "Run: node . connect"
     node . connect ${tuuid} --api ${tapi} --pi ${tpi} --user ${tuser} --cb ${tcb}
 fi
-) 2>&1 |tee ${LOG}
+) 2>&1 | tee ${LOG}

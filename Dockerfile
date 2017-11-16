@@ -7,17 +7,17 @@ RUN mkdir -p $appdir
 WORKDIR $appdir
 
 # Install dependencies for accessing USB Bluetooth Dongle
-RUN apt-get update
-RUN apt-get install bluez libusb-1.0-0-dev libudev-dev usbutils -y
+# Combine RUN apt-get update with apt-get install in the same RUN statement to avoid caching issues (https://docs.docker.com/engine/userguide/eng-image/dockerfile_best-practices/)
+RUN apt-get update && apt-get install -y bluez libusb-1.0-0-dev libudev-dev usbutils
 RUN apt-get clean
 
-# Copy project files and install node modules (and rebuild)
+# Copy project files, install and rebuild node modules
 COPY . .
 RUN npm install
 RUN npm rebuild
-RUN ["chmod", "+x", "/usr/src/app/startup.sh"]
+RUN chmod +x /usr/src/app/startup.sh
 
 EXPOSE 8080
 
 # Execute start script
-ENTRYPOINT ["/bin/bash", "-c", "/usr/src/app/startup.sh"]
+ENTRYPOINT ["/usr/src/app/startup.sh"]

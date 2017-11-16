@@ -11,10 +11,11 @@ The Docker Container is controlled with Bash Script start-container.sh
 
     start-container.sh -a <ACTION> -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
 
-Example:
+Examples:
 
-    start-container.sh -a detect
+    start-container.sh -a detect -i d35a51c0de9c
     start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://termon.pillo-srv.ch/thingy
+    start-container.sh -a restart -i d35a51c0de9c
 
 For development purposes the project can still be run directly by navigating to the project directory and running
 

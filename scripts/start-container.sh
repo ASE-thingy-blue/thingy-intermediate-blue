@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# Usage:
-# ./start-container.sh -a {restart | start | detect} -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
-# Example:
-# ./start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://test.termon.pillo-srv.ch/thingy
-#
 # Action Parameters:
 # restart: Restart the whole container to get rid of volatile data.
 # start: Start the container. If the container already exists, delete the whole container and recreate a new one.
@@ -23,123 +18,139 @@ API="http://termon.pillo-srv.ch/thingy"
 
 function print_usage_and_exit()
 {
-    echo "
-Usage: $0 -a {restart | start | detect} -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
+	echo "
+Usage:
+$0 -a start -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
+$0 -a {detect | restart} -i <UUID>
+
 If omitted, PORT defaults to $PORT
 If omitted, API Address defaults to $API
-Example:
-Usage: $0 -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://test.termon.pillo-srv.ch/thingy
+
+Examples:
+$0 -a detect -i d35a51c0de9c
+$0 -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://test.termon.pillo-srv.ch/thingy
 "
-    exit 1
+	exit 1
 }
 
 # Test if port is free
 function is_port_free
 {
-    netstat -ntpl | grep [0-9]:${1:-8080} -q
-    if [[ $? -eq 1 ]]
-    then
-        echo "true"
-    else
-        echo "false"
-    fi
+	netstat -ntpl | grep [0-9]:${1:-8080} -q
+	if [[ $? -eq 1 ]]
+	then
+		echo "true"
+	else
+		echo "false"
+	fi
 }
 
 function do_container
 {
-    echo "Run do_container"
-    docker stop ${APP}
-    docker rm ${APP}
-    LINKS=""
-    CB="http://${IP}:${PORT}/"
-    ENVVARS="-e taction=run -e tuuid=${UUID} -e tuser=${USER} -e tapi=${API} -e tpi=${PI} -e tcb=${CB}"
-    DEVICES="--device /dev/bus/usb/001/004"
-    DIRS="-v ${APP_DATA_PATH}:/var/data"
-    PORTS="-p ${PORT}:8080"
-    #echo "docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
-    docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}
+	echo "Run do_container"
+	docker stop ${APP}
+	docker rm ${APP}
+	LINKS=""
+	CB="http://${IP}:${PORT}/"
+	ENVVARS="-e taction=run -e tuuid=${UUID} -e tuser=${USER} -e tapi=${API} -e tpi=${PI} -e tcb=${CB}"
+	DEVICES="--device /dev/bus/usb/001/004"
+	DIRS="-v ${APP_DATA_PATH}:/var/data"
+	PORTS="-p ${PORT}:8080"
+	#echo "docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
+	docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}
 }
-
-# Verify number of arguments passed to the script
-if [[ "$#" -lt 6 || "$#" -gt 10 ]]; then
-    echo "Illegal number of parameters"
-    print_usage_and_exit
-fi
 
 # Read arguments
 while getopts ":a:u:i:p:h:" opt
 do
-  case $opt in
-    a) ACTION="$OPTARG"
-    ;;
-    u) USER="$OPTARG"
-    ;;
-    i) UUID="$OPTARG"
-    ;;
-    p) PORT="$OPTARG"
-    ;;
-    h) API="$OPTARG"
-    ;;
-    *) echo "Invalid option -$OPTARG" >&2
-    print_usage_and_exit
-    ;;
-  esac
+	case $opt in
+		a) ACTION="$OPTARG"
+		;;
+		u) USER="$OPTARG"
+		;;
+		i) UUID="$OPTARG"
+		;;
+		p) PORT="$OPTARG"
+		;;
+		h) API="$OPTARG"
+		;;
+		*) echo "Invalid option -$OPTARG" >&2
+		print_usage_and_exit
+		;;
+	esac
 done
 
 # Check for empty Action argument
 if [[ -z "$ACTION" ]]
 then
-    echo "Error: Missing Action argument"
-    print_usage_and_exit
-fi
-
-# Check for empty User argument
-if [[ -z "$USER" ]]
-then
-    echo "Error: Missing User argument"
-    print_usage_and_exit
+	echo "Error: Missing Action argument"
+	print_usage_and_exit
 fi
 
 # Check for empty UUID argument
 if [[ -z "$UUID" ]]
 then
-    echo "Error: Missing UUID argument"
-    print_usage_and_exit
+	echo "Error: Missing UUID argument"
+	print_usage_and_exit
 fi
-
-# Verify Port argument
-re='^[0-9]+$'
-if ! [[ $PORT =~ $re ]]
-then
-   echo "Error: Port argument is not a number"
-   print_usage_and_exit
-fi
-
-# Increment port number if its already in use
-RESULT=$(is_port_free ${PORT})
-while [ "$RESULT" == "false" ]
-do
-    let PORT=PORT+1
-    RESULT=$(is_port_free ${PORT})
-done
 
 # Set path variables
 IMAGE="aseteamblue/thingy-intermediate-blue"
 # Enable for Local Image Usage
 #IMAGE="thingy-test"
 APP="thingy_${UUID}"
-APP_PATH="/opt/docker/containers/${APP}/"
-APP_DATA_PATH="${APP_PATH}data/"
-
-# Create directories, skip if already created
-mkdir -p ${APP_PATH}
-mkdir -p ${APP_DATA_PATH}
 
 case $ACTION in
 ("start")
+	# Verify number of arguments passed to the script
+	if [[ "$#" -lt 6 || "$#" -gt 10 ]]
+	then
+		echo "Illegal number of parameters"
+		print_usage_and_exit
+	fi
+
+	# Check for empty User argument
+	if [[ -z "$USER" ]]
+	then
+		echo "Error: Missing User argument"
+		print_usage_and_exit
+	fi
+
+	# Verify Port argument
+	re='^[0-9]+$'
+	if ! [[ $PORT =~ $re ]]
+	then
+		echo "Error: Port argument is not a number"
+		print_usage_and_exit
+	fi
+
+	APP_PATH="/opt/docker/containers/${APP}/"
+	APP_DATA_PATH="${APP_PATH}data/"
+
+	# Create directories, skip if already created
+	mkdir -p ${APP_PATH}
+	mkdir -p ${APP_DATA_PATH}
+
+	# Increment port number if its already in use
+	RESULT=$(is_port_free ${PORT})
+	while [ "$RESULT" == "false" ]
+	do
+		let PORT=PORT+1
+		RESULT=$(is_port_free ${PORT})
+	done
+
 	echo "Rebuilding Docker Container '${APP}'"
 	do_container
+
 ;;
+("restart"|"detect")
+	# Verify number of arguments passed to the script
+	if [[ "$#" -ne 4 ]]
+	then
+		echo "Illegal number of parameters"
+		print_usage_and_exit
+	fi
+;;&
 ("restart")
 	echo "Restarting Docker Container '${APP}'"
 	docker restart ${APP}
