@@ -12,7 +12,11 @@ RUN apt-get update && apt-get install -y bluez libusb-1.0-0-dev libudev-dev usbu
 RUN apt-get clean
 
 # Copy project files, install and rebuild node modules
-COPY . .
+COPY ./modules .
+COPY ./index.js .
+COPY ./package.json .
+COPY ./startup.sh .
+
 RUN npm install
 RUN npm rebuild
 RUN chmod +x /usr/src/app/startup.sh
