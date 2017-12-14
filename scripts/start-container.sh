@@ -47,17 +47,18 @@ function is_port_free
 
 function do_container
 {
-	echo "Run do_container"
-	docker stop ${APP}
-	docker rm ${APP}
-	LINKS=""
-	CB="http://${IP}:${PORT}/"
-	ENVVARS="-e taction=run -e tuuid=${UUID} -e tuser=${USER} -e tapi=${API} -e tpi=${PI} -e tcb=${CB}"
-	DEVICES="--device /dev/bus/usb/001/004"
-	DIRS="-v ${APP_DATA_PATH}:/var/data"
-	PORTS="-p ${PORT}:8080"
-	#echo "docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
-	docker run --net host --name ${APP} ${ENVVARS} ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}
+    echo "Run do_container"
+    docker stop ${APP}
+    docker rm ${APP}
+    LINKS=""
+    CB="http://${IP}:${PORT}/"
+    ENVVARS="--env taction=run --env tuuid=${UUID} --env tapi=${API} --env tpi=${PI} --env tcb=${CB}"
+    DEVICES="--device /dev/bus/usb/001/004"
+    DIRS="-v ${APP_DATA_PATH}:/var/data"
+    PORTS="-p ${PORT}:8080"
+    echo "docker run --net host --name ${APP} ${ENVVARS} --env \"tuser=${USER}\" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
+    echo ""
+    docker run --net host --name ${APP} ${ENVVARS} --env "tuser=${USER}" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} ${IMAGE}
 }
 
 # Read arguments
