@@ -14,6 +14,7 @@ function onDiscover(thingy) {
     });
 
     thingy.connectAndSetUp(function(error) {
+        
         if (error) {
             console.error('Connection error: ' + error);
         } else {
@@ -31,13 +32,13 @@ function onDiscover(thingy) {
         client.registerDevice.call(thingy).on('complete', function() {
             console.log('registerDevice done');
         });
+        
         //Load Settings from Server
         client.getSettings.call(thingy).on('complete', setup.bind(thingy));
-        //Ask for LED Config each 1000ms
-        setInterval(() =>
-            client.getLed.call(thingy).on('complete', thingy.led_breathe.bind(thingy)
-        ), 1000);
-        
+
+        //Ask for LED Config each 5000ms
+        setInterval(() => client.getLed.call(thingy).on('complete', setLed.bind(thingy)), 5000);
+
         thingy.enabled = true;
         thingy.temperature_enable(function(error) {
             if (error) {
@@ -46,6 +47,7 @@ function onDiscover(thingy) {
                 console.log('Temperature sensor started!');
             }
         });
+
         thingy.pressure_enable(function(error) {
             if (error) {
                 console.error('Error starting pressure sensor: ' + error);
@@ -53,6 +55,7 @@ function onDiscover(thingy) {
                 console.log('Pressure sensor started!');
             }
         });
+
         thingy.humidity_enable(function(error) {
             if (error) {
                 console.error('Error starting humidity sensor: ' + error);
@@ -60,6 +63,7 @@ function onDiscover(thingy) {
                 console.log('Humidity sensor started!');
             }
         });
+
         thingy.color_enable(function(error) {
             if (error) {
                 console.error('Error starting color sensor: ' + error);
@@ -67,6 +71,7 @@ function onDiscover(thingy) {
                 console.log('Color sensor started!');
             }
         });
+
         thingy.gas_enable(function(error) {
             if (error) {
                 console.error('Error starting gas sensor: ' + error);
@@ -74,6 +79,7 @@ function onDiscover(thingy) {
                 console.log('Gas sensor started!');
             }
         });
+
         thingy.button_enable(function(error) {
             if (error) {
                 console.error('Error starting button: ' + error);
@@ -89,8 +95,6 @@ function onDiscover(thingy) {
  * @param settings
  */
 function setup(settings) {
-    console.log('Setting up Thingy with Settings:');
-    console.log(settings);
 
     let defaultSettings = {
         temperature: {interval: 5000},
@@ -140,6 +144,25 @@ function setup(settings) {
             console.error('Gas sensor configuration error: ' + error);
         }
     });
+}
+
+/**
+ * Set Thingy LED Color from Server Data
+ * @param led
+ */
+function setLed(led) {
+    let defaultLed = {
+        color: 1,
+        intensity: 5,
+        delay: 2500
+    };
+
+    //Are settings provided?
+    if (!led || led === led || !led.color) {
+        led = defaultLed;
+    }
+
+    this.led_breathe(led);
 }
 
 module.exports = function(_client, _pi, _user) {
