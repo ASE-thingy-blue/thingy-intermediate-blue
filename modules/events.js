@@ -105,8 +105,8 @@ function setup(settings) {
     };
 
     //Are settings provided?
-    if (!settings || settings === undefined) {
-        console.log('Use default Thingy configuration.');
+    if (settings === undefined) {
+        console.log('Use default Thingy Sensor configuration.');
         settings = defaultSettings;
     }
 
@@ -151,24 +151,22 @@ function setup(settings) {
  * @param led
  */
 function setLed(led) {
-    console.log("new led data: ");
-    console.log(led);
 
     let defaultLed = {
         color: 1,
-        intensity: 5,
-        delay: 2500
+        intensity: 10,
+        delay: 2000
     };
 
     //Are settings provided?
-    if (led === undefined || led.color === null) {
+    if (!led || !led.hasOwnProperty('color') || !led.hasOwnProperty('intensity') || !led.hasOwnProperty('delay')) {
+        console.log('Use default Thingy Led configuration.');
         led = defaultLed;
     }
 
-    console.log("used led data: ");
-    console.log(led);
-
-    this.led_breathe(led);
+    this.led_breathe(led, function(error) {
+        console.log(error);
+    });
 }
 
 module.exports = function(_client, _pi, _user) {
