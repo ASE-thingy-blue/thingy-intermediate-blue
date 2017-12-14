@@ -151,6 +151,9 @@ function setup(settings) {
  * @param led
  */
 function setLed(led) {
+    console.log("new led data: ");
+    console.log(led);
+
     let defaultLed = {
         color: 1,
         intensity: 5,
@@ -161,6 +164,9 @@ function setLed(led) {
     if (!led || led === led || !led.color) {
         led = defaultLed;
     }
+
+    console.log("used led data: ");
+    console.log(led);
 
     this.led_breathe(led);
 }
