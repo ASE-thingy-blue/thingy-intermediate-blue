@@ -34,7 +34,9 @@ function onDiscover(thingy) {
         //Load Settings from Server
         client.getSettings.call(thingy).on('complete', setup.bind(thingy));
         //Ask for LED Config each 1000ms
-        setInterval(() => client.getLed.call(thingy).on('complete', thingy.led_breathe.bind(thingy)), 1000);
+        setInterval(() =>
+            client.getLed.call(thingy).on('complete', thingy.led_breathe.bind(thingy)
+        ), 1000);
         
         thingy.enabled = true;
         thingy.temperature_enable(function(error) {
@@ -87,27 +89,53 @@ function onDiscover(thingy) {
  * @param settings
  */
 function setup(settings) {
-    this.temperature_interval_set(settings.temperature.interval, function(error) {
+    console.log('Setting up Thingy with Settings:');
+    console.log(settings);
+
+    let defaultSettings = {
+        temperature: {interval: 5000},
+        pressure: {interval: 5000},
+        humidity: {interval: 5000},
+        color: {interval: 5000},
+        gas: {mode: 3}
+    };
+
+    //Are settings provided?
+    if (!settings || settings === undefined) {
+        console.log('Use default Thingy configuration.');
+        settings = defaultSettings;
+    }
+
+    let ti = settings.temperature ? settings.temperature.interval : defaultSettings.temperature.interval;
+    this.temperature_interval_set(ti, function(error) {
         if (error) {
             console.error('Temperature sensor configuration error: ' + error);
         }
     });
-    this.pressure_interval_set(settings.pressure.interval, function(error) {
+
+    let pi = settings.pressure ? settings.pressure.interval : defaultSettings.pressure.interval;
+    this.pressure_interval_set(pi, function(error) {
         if (error) {
             console.error('Pressure sensor configuration error: ' + error);
         }
     });
-    this.humidity_interval_set(settings.humidity.interval, function(error) {
+
+    let hi = settings.humidity ? settings.humidity.interval : defaultSettings.humidity.interval;
+    this.humidity_interval_set(hi, function(error) {
         if (error) {
             console.error('Humidity sensor configuration error: ' + error);
         }
     });
-    this.color_interval_set(settings.color.interval, function(error) {
+
+    let ci = settings.color ? settings.color.interval : defaultSettings.color.interval;
+    this.color_interval_set(ci, function(error) {
         if (error) {
             console.error('Color sensor configuration error: ' + error);
         }
     });
-    this.gas_mode_set(settings.gas.mode, function(error) {
+
+    let gm = settings.gas ? settings.gas.mode : defaultSettings.gas.mode;
+    this.gas_mode_set(gm, function(error) {
         if (error) {
             console.error('Gas sensor configuration error: ' + error);
         }
