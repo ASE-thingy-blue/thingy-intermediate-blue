@@ -164,8 +164,10 @@ function setLed(led) {
         led = defaultLed;
     }
 
-    this.led_breathe(led, function(error) {
-        console.log(error);
+    this.led_breathe(led, function(err) {
+        if (err) {
+            console.log(err);
+        }
     });
 }
 
