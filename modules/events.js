@@ -36,8 +36,8 @@ function onDiscover(thingy) {
         //Load Settings from Server
         client.getSettings.call(thingy).on('complete', setup.bind(thingy));
 
-        //Ask for LED Config each 5000ms
-        setInterval(() => client.getLed.call(thingy).on('complete', setLed.bind(thingy)), 5000);
+        //Ask for LED Config each 2500ms
+        setInterval(() => client.getLed.call(thingy).on('complete', setLed.bind(thingy)), 2500);
 
         thingy.enabled = true;
         thingy.temperature_enable(function(error) {
@@ -161,7 +161,7 @@ function setLed(led) {
     };
 
     //Are settings provided?
-    if (!led || led === led || !led.color) {
+    if (led === undefined || led.color === null) {
         led = defaultLed;
     }
 
