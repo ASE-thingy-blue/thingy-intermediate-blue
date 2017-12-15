@@ -7,15 +7,23 @@ It was derived from [https://github.com/DurandA/thingy-gateway](https://github.c
 
 ## Usage
 
-The Docker Container is controlled with Bash Script start-container.sh
+The Docker Image has to be built on a Raspberry Pi because of its processor architecture.
 
-    start-container.sh -a <ACTION> -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
+Change the image to use depending on your Docker Host architecture (see CONFIG in [start-container.sh](https://github.com/ASE-thingy-blue/thingy-intermediate-blue/blob/master/scripts/start-container.sh)):
+        
+    git clone git@github.com:ASE-thingy-blue/thingy-intermediate-blue.git
+    cd thingy-intermediate-blue/
+    docker build -t thingy-intermediate-blue .
+
+The Docker Container is controlled with Bash Script [start-container.sh](https://github.com/ASE-thingy-blue/thingy-intermediate-blue/blob/master/scripts/start-container.sh):
+
+    ./scripts/start-container.sh -a <ACTION> -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
 
 Examples:
 
-    start-container.sh -a detect -i d35a51c0de9c
-    start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://termon.pillo-srv.ch/thingy
-    start-container.sh -a restart -i d35a51c0de9c
+    ./scripts/start-container.sh -a detect -i d35a51c0de9c
+    ./scripts/start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://termon.pillo-srv.ch/thingy
+    ./scripts/start-container.sh -a restart -i d35a51c0de9c
 
 For development purposes the project can still be run directly by navigating to the project directory and running
 

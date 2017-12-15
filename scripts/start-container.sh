@@ -56,9 +56,12 @@ function do_container
     DEVICES="--device /dev/bus/usb/001/004"
     DIRS="-v ${APP_DATA_PATH}:/var/data"
     PORTS="-p ${PORT}:8080"
-    echo "docker run --net host --name ${APP} ${ENVVARS} --env \"tuser=${USER}\" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
+
     echo ""
-    docker run --net host --name ${APP} ${ENVVARS} --env "tuser=${USER}" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} ${IMAGE}
+    echo "Running Docker command:"
+    echo "docker run --net host --restart=always --name ${APP} ${ENVVARS} --env \"tuser=${USER}\" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}"
+    echo ""
+    docker run --net host --restart=always --name ${APP} ${ENVVARS} --env "tuser=${USER}" ${DEVICES} ${LINKS} ${DIRS} ${TIME} ${PORTS} -d ${IMAGE}
 }
 
 # Read arguments
@@ -95,10 +98,13 @@ then
 	print_usage_and_exit
 fi
 
-# Set path variables
-IMAGE="aseteamblue/thingy-intermediate-blue"
-# Enable for Local Image Usage
-#IMAGE="thingy-test"
+### CONFIG: set image name depending on Docker host system:
+# Use pre-built Docker Image for x86_64 host systems
+#IMAGE="aseteamblue/thingy-intermediate-blue"
+# Use locally built Docker Image for arm host systems (see README.md)
+IMAGE="thingy-intermediate-blue"
+
+# Set Container name
 APP="thingy_${UUID}"
 
 case $ACTION in
