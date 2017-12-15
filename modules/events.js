@@ -37,7 +37,12 @@ function onDiscover(thingy) {
         client.getSettings.call(thingy).on('complete', setup.bind(thingy));
 
         //Ask for LED Config each 2500ms
-        setInterval(() => client.getLed.call(thingy).on('complete', setLed.bind(thingy)), 2500);
+        setInterval(() =>
+            client.getLed.call(thingy)
+                .on('complete', setLed.bind(thingy))
+                .on('timeout', setLed.bind(thingy))
+                .on('error', setLed.bind(thingy))
+            , 2500);
 
         thingy.enabled = true;
         thingy.temperature_enable(function(error) {

@@ -2,6 +2,7 @@ const rest = require('restler');
 
 /**
  * Client to Communicate with API Server
+ * Using https://github.com/danwrong/restler
  * @param api: API Server URL
  * @param pi: Device (Raspberry Pi) ID
  * @param user: Username
@@ -22,7 +23,7 @@ module.exports = function(api, pi, user, cb) {
             user: user,
             cb: cb
         };
-        return rest.putJson(api + '/' + this.id, data, {rejectUnauthorized:false});
+        return rest.putJson(api + '/' + this.id, data, {timeout:10000, rejectUnauthorized:false});
     };
 
     /**
@@ -30,7 +31,7 @@ module.exports = function(api, pi, user, cb) {
      * @returns {*}
      */
     module.getSettings = function() {
-        return rest.get(api + '/' + this.id + '/setup', {rejectUnauthorized:false});
+        return rest.get(api + '/' + this.id + '/setup', {timeout:2000, rejectUnauthorized:false});
     };
 
     /**
@@ -38,7 +39,7 @@ module.exports = function(api, pi, user, cb) {
      * @returns {*}
      */
     module.getLed = function() {
-        return rest.get(api + '/' + this.id + '/actuators/led', {rejectUnauthorized:false});
+        return rest.get(api + '/' + this.id + '/actuators/led', {timeout:2000, rejectUnauthorized:false});
     };
 
     /**
@@ -49,7 +50,7 @@ module.exports = function(api, pi, user, cb) {
      */
     function sendSensorData(sensor, data){
         data.timestamp = new Date().getTime();
-        return rest.postJson(api + '/' + this.id + '/sensors/' + sensor, data, {rejectUnauthorized:false});
+        return rest.postJson(api + '/' + this.id + '/sensors/' + sensor, data, {timeout:10000, rejectUnauthorized:false});
     }
 
     /**
