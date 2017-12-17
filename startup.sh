@@ -2,6 +2,8 @@
 
 # This script is used inside the Docker container to set up the Thingy Intermediate Gateway
 
+mkdir -p /var/data
+
 DATE=`date +"%Y-%m-%d"`
 TIMESTAMP=`date +"%Y-%m-%d_%H-%M"`
 
