@@ -172,7 +172,9 @@ case $ACTION in
 	fi
 
 	# Detect UUID
-	docker run --net host -e "taction=detect" --device /dev/bus/usb/001/004 ${IMAGE}
+	docker run --net host -e "taction=detect" --device /dev/bus/usb/001/004 --name detect_thingy ${IMAGE}
+	# Remove container after detection
+	docker rm detect_thingy
 ;;
 (*)
 	echo "Invalid Action parameter"
