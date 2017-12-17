@@ -80,8 +80,10 @@ const argv = require('yargs')
     console.log('Search for device UUIDs... (15s)');
     Promise.all(discoverAll()).then(thingy => {
         console.log('Discovered: ' + thingy);
+        process.exit()
     }).catch(error => {
         console.log(error);
+        process.exit(1)
     });
 })
 .help()
