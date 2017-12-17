@@ -102,10 +102,10 @@ function onDiscover(thingy) {
 function setup(settings) {
 
     let defaultSettings = {
-        temperature: {interval: 5000},
-        pressure: {interval: 5000},
-        humidity: {interval: 5000},
-        color: {interval: 5000},
+        temperature: {interval: 15000},
+        pressure: {interval: 15000},
+        humidity: {interval: 15000},
+        color: {interval: 15000},
         gas: {mode: 3}
     };
 
