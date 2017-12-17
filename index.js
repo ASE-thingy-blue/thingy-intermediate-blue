@@ -28,6 +28,18 @@ function* discoverByIds(uuids) {
     }
 }
 
+function* discoverAll() {
+    yield new Promise((resolve, reject) => {
+        Thingy.discoverAll(function (thingy) {
+            resolve(thingy);
+        });
+        //Stop search after 15s
+        setTimeout(function() {
+            reject('No available thingy found in 15 seconds.');
+        }, 15000);
+    });
+}
+
 builder = (yargs) => {
     yargs.option('api', {
         describe: 'Root URL of Server API.',
@@ -66,15 +78,10 @@ const argv = require('yargs')
 })
 .command('discover', 'Discover all devices and connect to <api-root>', builder, (argv) => {
     console.log('Search for device UUIDs... (15s)');
-    yield new Promise((resolve, reject) => {
-        Thingy.discoverAll(function (thingy) {
-            console.log('Discovered: ' + thingy);
-            resolve(thingy);
-        });
-        //Stop search after 15s
-        setTimeout(function() {
-            reject('no available thingy found in 15 seconds.');
-        }, 15000);
+    Promise.all(discoverAll).then(thingy => {
+        console.log('Discovered: ' + thingy);
+    }).catch(error => {
+        console.log(error);
     });
 })
 .help()

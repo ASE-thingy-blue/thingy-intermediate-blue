@@ -14,7 +14,7 @@ ACTION=""
 USER=""
 UUID=""
 PORT="8080"
-API="http://termon.pillo-srv.ch/thingy"
+API="https://termon.pillo-srv.ch/thingy"
 
 function print_usage_and_exit()
 {
@@ -29,7 +29,7 @@ If omitted, API Address defaults to $API
 
 Examples:
 $0 -a detect
-$0 -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://test.termon.pillo-srv.ch/thingy
+$0 -a start -u DKPillo -i d35a51c0de9c -p 8080 -h https://termon.pillo-srv.ch/thingy
 $0 -a restart -i d35a51c0de9c
 "
 	exit 1
@@ -94,10 +94,13 @@ then
 fi
 
 # Check for empty UUID argument
-if [[ -z "$UUID" ]]
+if [[ "$ACTION" != "detect" ]]
 then
-	echo "Error: Missing UUID argument"
-	print_usage_and_exit
+    if [[ -z "$UUID" ]]
+    then
+        echo "Error: Missing UUID argument"
+        print_usage_and_exit
+    fi
 fi
 
 ### CONFIG: set image name depending on Docker host system:
