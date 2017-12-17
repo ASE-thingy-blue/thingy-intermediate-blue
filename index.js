@@ -78,7 +78,7 @@ const argv = require('yargs')
 })
 .command('discover', 'Discover all devices and connect to <api-root>', builder, (argv) => {
     console.log('Search for device UUIDs... (15s)');
-    Promise.all(discoverAll).then(thingy => {
+    Promise.all(discoverAll()).then(thingy => {
         console.log('Discovered: ' + thingy);
     }).catch(error => {
         console.log(error);
