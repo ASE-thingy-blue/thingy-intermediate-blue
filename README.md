@@ -21,7 +21,7 @@ The Docker Container is controlled with Bash Script [start-container.sh](https:/
 
 Examples:
 
-    ./scripts/start-container.sh -a detect -i d35a51c0de9c
+    ./scripts/start-container.sh -a detect
     ./scripts/start-container.sh -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://termon.pillo-srv.ch/thingy
     ./scripts/start-container.sh -a restart -i d35a51c0de9c
 

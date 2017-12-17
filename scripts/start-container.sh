@@ -20,15 +20,17 @@ function print_usage_and_exit()
 {
 	echo "
 Usage:
+$0 -a detect
 $0 -a start -u <USER> -i <UUID> [-p <PORT> -h <API Address>]
-$0 -a {detect | restart} -i <UUID>
+$0 -a restart -i <UUID>
 
 If omitted, PORT defaults to $PORT
 If omitted, API Address defaults to $API
 
 Examples:
-$0 -a detect -i d35a51c0de9c
+$0 -a detect
 $0 -a start -u DKPillo -i d35a51c0de9c -p 8080 -h http://test.termon.pillo-srv.ch/thingy
+$0 -a restart -i d35a51c0de9c
 "
 	exit 1
 }
@@ -150,19 +152,25 @@ case $ACTION in
 	do_container
 
 ;;
-("restart"|"detect")
-	# Verify number of arguments passed to the script
+("restart")
+    # Verify number of arguments passed to the script
 	if [[ "$#" -ne 4 ]]
 	then
 		echo "Illegal number of parameters"
 		print_usage_and_exit
 	fi
-;;&
-("restart")
+	
 	echo "Restarting Docker Container '${APP}'"
 	docker restart ${APP}
 ;;
 ("detect")
+    # Verify number of arguments passed to the script
+	if [[ "$#" -ne 2 ]]
+	then
+		echo "Illegal number of parameters"
+		print_usage_and_exit
+	fi
+
 	# Detect UUID
 	docker run --net host -e "taction=detect" --device /dev/bus/usb/001/004 ${IMAGE}
 ;;

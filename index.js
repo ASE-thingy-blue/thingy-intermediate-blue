@@ -65,9 +65,16 @@ const argv = require('yargs')
     });
 })
 .command('discover', 'Discover all devices and connect to <api-root>', builder, (argv) => {
-    console.log('Search for device UUIDs...');
-    Thingy.discoverAll(function (thingy) {
-        console.log('Discovered: ' + thingy);
+    console.log('Search for device UUIDs... (15s)');
+    yield new Promise((resolve, reject) => {
+        Thingy.discoverAll(function (thingy) {
+            console.log('Discovered: ' + thingy);
+            resolve(thingy);
+        });
+        //Stop search after 15s
+        setTimeout(function() {
+            reject('no available thingy found in 15 seconds.');
+        }, 15000);
     });
 })
 .help()
